@@ -169,6 +169,16 @@ class BaseModel:
 
 class OpenAIModel(BaseModel):
     MODELS = {
+        "Phi-3-mini-128k-instruct": {
+            "max_context": 16_385,
+            "cost_per_input_token": 0,
+            "cost_per_output_token": 0,
+        },
+        "gpt-4-0215-preview": {
+            "max_context": 128_000,
+            "cost_per_input_token": 1e-05,
+            "cost_per_output_token": 3e-05,
+        },
         "gpt-3.5-turbo-0125": {
             "max_context": 16_385,
             "cost_per_input_token": 5e-07,
@@ -848,7 +858,7 @@ def get_model(args: ModelArguments, commands: Optional[list[Command]] = None):
         return HumanThoughtModel(args, commands)
     if args.model_name == "replay":
         return ReplayModel(args, commands)
-    elif args.model_name.startswith("gpt") or args.model_name.startswith("ft:gpt") or args.model_name.startswith("azure:gpt"):
+    elif args.model_name.startswith("Phi") or args.model_name.startswith("gpt") or args.model_name.startswith("ft:gpt") or args.model_name.startswith("azure:gpt"):
         return OpenAIModel(args, commands)
     elif args.model_name.startswith("claude"):
         return AnthropicModel(args, commands)
