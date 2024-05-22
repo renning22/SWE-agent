@@ -672,11 +672,6 @@ class SWEEnv(gym.Env):
         Creates conda environment and installs third party dependencies to allow code execution
         """
         assert self.record is not None  # mypy
-
-        print(self.record)
-
-        exit(0)
-        
         if (self.record["problem_statement_source"] != "swe-bench" or \
             self.record["repo_type"] == "local") and self.args.environment_setup is None:
             logger.warning((
