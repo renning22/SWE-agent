@@ -18,7 +18,7 @@ from sweagent.agent.models import (
 )
 from sweagent.agent.parsing import ParseFunction, FormatError
 from sweagent.environment.utils import LOGGER_NAME
-from sweagent.environment.swe_env import SWEEnv
+from sweagent.environment.swe_env_prebuilt_docker import SWEEnv
 from tenacity import RetryError
 from typing import Dict, List, Optional, Tuple, Any, TypedDict
 

@@ -10,7 +10,7 @@ from sweagent.agent.models import (
     ModelArguments,
 )
 
-from sweagent.environment.swe_env import (
+from sweagent.environment.swe_env_prebuilt_docker import (
     EnvironmentArguments,
     SWEEnv,
 )

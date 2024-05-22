@@ -248,6 +248,8 @@ def _get_non_persistent_container(ctr_name: str, image_name: str) -> Tuple[subpr
         "run",
         "-i",
         "--rm",
+        "--entrypoint",
+        "",
         "--name",
         ctr_name,
         image_name,
