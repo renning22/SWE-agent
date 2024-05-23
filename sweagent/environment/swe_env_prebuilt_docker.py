@@ -247,11 +247,13 @@ class SWEEnv(gym.Env):
             "echo -n > /root/files_to_edit.txt",
             f"cd {self._repo_name}",
             "export ROOT=$(pwd -P)",
+            f"git config --global --add safe.directory $ROOT",  # Ning: fix root user issue, "fatal: detected dubious ownership in repository"
             "git status",
             "git restore .",
             f"git reset --hard {self.base_commit}",
             "git clean -fdxq",
         ]:
+            self.logger.info(f'Clean repo: {cmd}')
             self.communicate_with_handling(
                 input=cmd,
                 error_msg="Failed to clean repository",
