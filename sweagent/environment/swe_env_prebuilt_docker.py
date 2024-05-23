@@ -33,16 +33,9 @@ from sweagent.environment.utils import (
     LOGGER_NAME,
     read_with_timeout_experimental,
 )
-from swebench import (
-    get_environment_yml,
-    get_requirements,
-    MAP_VERSION_TO_INSTALL
-)
 from typing import Optional, Tuple
 
 LONG_TIMEOUT = 500
-PATH_TO_REQS = "/root/requirements.txt"
-PATH_TO_ENV_YML = "/root/environment.yml"
 
 handler = RichHandler(show_time=False, show_path=False)
 handler.setLevel(logging.DEBUG)
@@ -240,7 +233,7 @@ class SWEEnv(gym.Env):
         self.logger.info(f'[{instance_id}] use image "{docker_image}"')
 
         self.image_name = docker_image
-        self._reset_container()
+        self.reset_container()
         #######################
 
         # Ning: already in working dir which has the repo.
@@ -403,23 +396,24 @@ class SWEEnv(gym.Env):
             raise
         except:
             pass
-        assert self.container is not None
-        assert self.container_obj is not None
-        self.container.terminate()
-        if self.persistent:
-            if self.container_obj.status not in {"paused", "exited"}:
-                self.container_obj.pause()
-                self.logger.info("Agent container paused")
+        if getattr(self, 'container', None):
+            assert self.container_obj is not None
+            self.container.terminate()
+            if self.persistent:
+                if self.container_obj.status not in {"paused", "exited"}:
+                    self.container_obj.pause()
+                    self.logger.info("Agent container paused")
+                else:
+                    self.logger.info(f"Agent container status: {self.container_obj.status}")
             else:
-                self.logger.info(f"Agent container status: {self.container_obj.status}")
-        else:
-            try:
-                self.container_obj.remove(force=True)
-            except KeyboardInterrupt:
-                raise
-            except:
-                pass
-            self.logger.info("Agent container stopped")
+                try:
+                    self.container_obj.stop()
+                    self.container_obj.remove(force=True)
+                except KeyboardInterrupt:
+                    raise
+                except:
+                    pass
+                self.logger.info("Agent container stopped")
         for hook in self.hooks:
             hook.on_close()
 
@@ -439,6 +433,7 @@ class SWEEnv(gym.Env):
     def reset_container(self) -> None:
         self.close()
         self.container = None
+        self.container_name = None
         self.container_obj = None
         self._reset_container()
 
@@ -446,7 +441,8 @@ class SWEEnv(gym.Env):
         """
         Handles container initialization. Defines container name and creates it
         """
-        if self.container_name is None:
+        ### Ning: always generate a new container_name
+        if True:
             process_id = str(os.getpid())
             current_time = str(datetime.datetime.now())
             unique_string = current_time + process_id
