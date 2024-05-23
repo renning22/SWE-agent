@@ -254,7 +254,6 @@ def _get_non_persistent_container(ctr_name: str, image_name: str) -> Tuple[subpr
         ctr_name,
         image_name,
         "/bin/bash",
-        "-l",
     ]
     logger.debug(f"Starting container with command: %s", shlex.join(startup_cmd))
     container = subprocess.Popen(
